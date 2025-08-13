@@ -6,7 +6,7 @@ import {
   usePostsState,
   usePostActions,
   useSelectionState,
-} from '../../entities/post/model/hooks';
+} from '../../entities/post/model/hooks/index';
 import type { Post, UserLite } from '../../entities/post/model/types';
 import {
   Button,
@@ -20,8 +20,11 @@ import {
 
 const PostsTable: React.FC = () => {
   const { posts, searchQuery, selectedTag, setSelectedTag } = usePostsState();
+
   const { setSelectedPost, setSelectedUser } = useSelectionState();
+
   const { setShowEditDialog, setShowPostDetailDialog, setShowUserModal } = useDialogState();
+
   const { deletePost } = usePostActions();
 
   const highlightText = (text: string | undefined, highlight: string) => {
@@ -39,15 +42,19 @@ const PostsTable: React.FC = () => {
   };
 
   const onTagClick = (tag: string) => setSelectedTag(tag);
+
   const onOpenPostDetail = (post: Post) => {
     setSelectedPost(post);
     setShowPostDetailDialog(true);
   };
+
   const onEditPost = (post: Post) => {
     setSelectedPost(post);
     setShowEditDialog(true);
   };
+
   const onDeletePost = (id: number) => deletePost(id);
+
   const onAuthorClick = (user: UserLite) => {
     setSelectedUser(user);
     setShowUserModal(true);

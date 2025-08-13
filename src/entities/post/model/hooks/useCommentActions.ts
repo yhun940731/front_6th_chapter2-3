@@ -6,7 +6,7 @@ import {
   updateCommentAtom,
   deleteCommentAtom,
   likeCommentAtom,
-} from '../atoms';
+} from '../atoms/index';
 
 export function useCommentActions() {
   const fetchComments = useSetAtom(fetchCommentsAtom);
@@ -14,5 +14,6 @@ export function useCommentActions() {
   const updateComment = useSetAtom(updateCommentAtom);
   const deleteComment = useSetAtom(deleteCommentAtom);
   const likeComment = useSetAtom(likeCommentAtom);
+
   return { fetchComments, addComment, updateComment, deleteComment, likeComment };
 }

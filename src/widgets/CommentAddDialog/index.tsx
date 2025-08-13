@@ -5,7 +5,7 @@ import {
   useCommentActions,
   useDialogState,
   useSelectionState,
-} from '../../entities/post/model/hooks';
+} from '../../entities/post/model/hooks/index';
 import { AddCommentFormContent } from '../../features/PostDialogs';
 import { DialogContent, DialogHeader, DialogTitle } from '../../shared/ui';
 
@@ -13,8 +13,11 @@ export const Dialog = DialogPrimitive.Root;
 
 const CommentAddDialog: React.FC = () => {
   const { showAddCommentDialog, setShowAddCommentDialog } = useDialogState();
+
   const { newComment, setNewComment } = useSelectionState();
+
   const { addComment } = useCommentActions();
+
   return (
     <Dialog open={showAddCommentDialog} onOpenChange={setShowAddCommentDialog}>
       <DialogContent>

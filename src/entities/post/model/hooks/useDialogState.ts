@@ -7,7 +7,7 @@ import {
   showEditCommentDialogAtom,
   showPostDetailDialogAtom,
   showUserModalAtom,
-} from '../atoms';
+} from '../atoms/index';
 
 export function useDialogState() {
   const [showAddDialog, setShowAddDialog] = useAtom(showAddDialogAtom);
@@ -16,6 +16,7 @@ export function useDialogState() {
   const [showEditCommentDialog, setShowEditCommentDialog] = useAtom(showEditCommentDialogAtom);
   const [showPostDetailDialog, setShowPostDetailDialog] = useAtom(showPostDetailDialogAtom);
   const [showUserModal, setShowUserModal] = useAtom(showUserModalAtom);
+
   return {
     showAddDialog,
     setShowAddDialog,

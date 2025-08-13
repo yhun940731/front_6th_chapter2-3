@@ -11,7 +11,7 @@ import {
   tagsAtom,
   selectedTagAtom,
   loadingAtom,
-} from '../atoms';
+} from '../atoms/index';
 
 export function usePostsState() {
   const [posts] = useAtom(postsAtom);
@@ -24,6 +24,7 @@ export function usePostsState() {
   const [tags] = useAtom(tagsAtom);
   const [selectedTag, setSelectedTag] = useAtom(selectedTagAtom);
   const [loading] = useAtom(loadingAtom);
+
   return {
     posts,
     total,

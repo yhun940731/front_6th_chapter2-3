@@ -7,7 +7,7 @@ import {
   newPostAtom,
   newCommentAtom,
   commentsAtom,
-} from '../atoms';
+} from '../atoms/index';
 
 export function useSelectionState() {
   const [selectedPost, setSelectedPost] = useAtom(selectedPostAtom);
@@ -16,6 +16,7 @@ export function useSelectionState() {
   const [newPost, setNewPost] = useAtom(newPostAtom);
   const [newComment, setNewComment] = useAtom(newCommentAtom);
   const [comments] = useAtom(commentsAtom);
+
   return {
     selectedPost,
     setSelectedPost,

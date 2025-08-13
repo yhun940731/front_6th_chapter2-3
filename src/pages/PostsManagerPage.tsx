@@ -2,7 +2,7 @@ import { useEffect } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
 
 // entities hooks
-import { usePostsState, usePostActions } from '../entities/post/model/hooks';
+import { usePostsState, usePostActions } from '../entities/post/model/hooks/index';
 import PaginationControls from '../features/PaginationControls';
 import PostsControls from '../features/PostsControls';
 import { Card, CardContent } from '../shared/ui';
@@ -36,6 +36,7 @@ const PostsManager = () => {
     setSelectedTag,
     loading,
   } = usePostsState();
+
   const {
     fetchTags: doFetchTags,
     fetchPosts: doFetchPosts,

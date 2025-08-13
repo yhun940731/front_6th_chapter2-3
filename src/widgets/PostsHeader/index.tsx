@@ -1,13 +1,14 @@
 import { Plus } from 'lucide-react';
 import React from 'react';
 
-import { useDialogState } from '../../entities/post/model/hooks';
+import { useDialogState } from '../../entities/post/model/hooks/index';
 import { Button, CardHeader, CardTitle } from '../../shared/ui';
 
 type Props = { title: string };
 
 const PostsHeader: React.FC<Props> = ({ title }) => {
   const { setShowAddDialog } = useDialogState();
+
   return (
     <CardHeader>
       <CardTitle className='flex items-center justify-between'>

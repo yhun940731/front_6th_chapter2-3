@@ -1,14 +1,16 @@
 import * as DialogPrimitive from '@radix-ui/react-dialog';
 import React from 'react';
 
-import { useDialogState, useSelectionState } from '../../entities/post/model/hooks';
+import { useDialogState, useSelectionState } from '../../entities/post/model/hooks/index';
 import { DialogContent, DialogHeader, DialogTitle } from '../../shared/ui';
 
 export const Dialog = DialogPrimitive.Root;
 
 const UserModal: React.FC = () => {
   const { showUserModal, setShowUserModal } = useDialogState();
+
   const { selectedUser: user } = useSelectionState();
+
   return (
     <Dialog open={showUserModal} onOpenChange={setShowUserModal}>
       <DialogContent>

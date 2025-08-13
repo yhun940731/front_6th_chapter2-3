@@ -6,7 +6,7 @@ import {
   useDialogState,
   usePostsState,
   useSelectionState,
-} from '../../entities/post/model/hooks';
+} from '../../entities/post/model/hooks/index';
 import { DialogContent, DialogHeader, DialogTitle } from '../../shared/ui';
 import CommentsList from '../../widgets/CommentsList';
 
@@ -14,9 +14,12 @@ export const Dialog = DialogPrimitive.Root;
 
 const PostDetailDialog: React.FC = () => {
   const { showPostDetailDialog, setShowPostDetailDialog } = useDialogState();
+
   const { selectedPost, setSelectedComment, newComment, setNewComment, comments } =
     useSelectionState();
+
   const { searchQuery } = usePostsState();
+
   const { fetchComments, deleteComment, likeComment } = useCommentActions();
 
   // 기존 페이지의 하이라이트 로직을 동일하게 사용

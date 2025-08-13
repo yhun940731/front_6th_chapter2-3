@@ -5,7 +5,9 @@ export type UserLite = {
 };
 
 export type Address = { address?: string; city?: string; state?: string };
+
 export type Company = { name?: string; title?: string };
+
 export type User = UserLite & {
   firstName?: string;
   lastName?: string;
@@ -44,5 +46,3 @@ export type Comment = {
 };
 
 export type NewComment = { body: string; postId: number | null; userId: number };
-// Unused after FSD refactor cleanup. File intentionally left blank.
-export {};

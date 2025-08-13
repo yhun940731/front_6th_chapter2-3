@@ -8,7 +8,7 @@ import {
   addPostAtom,
   updatePostAtom,
   deletePostAtom,
-} from '../atoms';
+} from '../atoms/index';
 
 export function usePostActions() {
   const fetchTags = useSetAtom(fetchTagsAtom);
@@ -18,5 +18,6 @@ export function usePostActions() {
   const addPost = useSetAtom(addPostAtom);
   const updatePost = useSetAtom(updatePostAtom);
   const deletePost = useSetAtom(deletePostAtom);
+
   return { fetchTags, fetchPosts, fetchPostsByTag, searchPosts, addPost, updatePost, deletePost };
 }

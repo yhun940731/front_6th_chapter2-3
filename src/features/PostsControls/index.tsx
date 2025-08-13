@@ -1,11 +1,12 @@
 import * as SelectPrimitive from '@radix-ui/react-select';
 import { Search } from 'lucide-react';
-export const Select = SelectPrimitive.Root;
-export const SelectValue = SelectPrimitive.Value;
 import React from 'react';
 
-import { usePostActions, usePostsState } from '../../entities/post/model/hooks';
+import { usePostActions, usePostsState } from '../../entities/post/model/hooks/index';
 import { Input, SelectTrigger, SelectContent, SelectItem } from '../../shared/ui';
+
+const Select = SelectPrimitive.Root;
+const SelectValue = SelectPrimitive.Value;
 
 const PostsControls: React.FC = () => {
   const {
@@ -19,7 +20,9 @@ const PostsControls: React.FC = () => {
     sortOrder,
     setSortOrder,
   } = usePostsState();
+
   const { searchPosts } = usePostActions();
+
   return (
     <div className='flex gap-4'>
       <div className='flex-1'>

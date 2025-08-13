@@ -1,16 +1,18 @@
 import * as SelectPrimitive from '@radix-ui/react-select';
 import React from 'react';
 
-import { usePostsState } from '../../entities/post/model/hooks';
+import { usePostsState } from '../../entities/post/model/hooks/index';
 import { Button, SelectContent, SelectItem, SelectTrigger } from '../../shared/ui';
 
-export const Select = SelectPrimitive.Root;
-export const SelectValue = SelectPrimitive.Value;
+const Select = SelectPrimitive.Root;
+const SelectValue = SelectPrimitive.Value;
 
 const PaginationControls: React.FC = () => {
   const { limit, setLimit, skip, setSkip, total } = usePostsState();
+
   const handlePrev = () => setSkip(Math.max(0, skip - limit));
   const handleNext = () => setSkip(skip + limit);
+
   return (
     <div className='flex justify-between items-center'>
       <div className='flex items-center gap-2'>

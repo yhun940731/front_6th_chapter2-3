@@ -2,8 +2,6 @@ import React from 'react';
 
 import { Button, Input, Textarea } from '../../shared/ui';
 
-// Lightweight form content components to be composed inside DialogContent
-
 export const AddPostFormContent: React.FC<{
   newPost: { title: string; body: string; userId: number };
   setNewPost: (v: { title: string; body: string; userId: number }) => void;
