@@ -4,7 +4,6 @@ import React from 'react';
 
 import { Input, SelectTrigger, SelectContent, SelectItem } from '../../shared/ui';
 
-
 export const Select = SelectPrimitive.Root;
 export const SelectValue = SelectPrimitive.Value;
 

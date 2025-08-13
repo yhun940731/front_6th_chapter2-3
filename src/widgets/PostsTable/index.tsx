@@ -74,7 +74,11 @@ const PostsTable: React.FC<Props> = ({
                 className='flex items-center space-x-2 cursor-pointer'
                 onClick={() => post.author && onAuthorClick(post.author)}
               >
-                <img src={post.author?.image} alt={post.author?.username} className='w-8 h-8 rounded-full' />
+                <img
+                  src={post.author?.image}
+                  alt={post.author?.username}
+                  className='w-8 h-8 rounded-full'
+                />
                 <span>{post.author?.username}</span>
               </div>
             </TableCell>

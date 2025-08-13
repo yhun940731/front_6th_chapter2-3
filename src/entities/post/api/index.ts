@@ -33,7 +33,9 @@ export async function apiAddPost(payload: { title: string; body: string; userId:
   return res.json();
 }
 
-export async function apiUpdatePost(id: number, payload: any) {
+import type { Post } from '../model/types';
+
+export async function apiUpdatePost(id: number, payload: Post) {
   const res = await fetch(`/api/posts/${id}`, {
     method: 'PUT',
     headers: { 'Content-Type': 'application/json' },
