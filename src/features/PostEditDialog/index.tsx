@@ -1,15 +1,11 @@
 import * as DialogPrimitive from '@radix-ui/react-dialog';
 import React from 'react';
 
-import {
-  useDialogState,
-  usePostActions,
-  useSelectionState,
-} from '../../entities/post/model/hooks/index';
-import { EditPostFormContent } from '../../features/PostDialogs';
+import { useDialogState, usePostActions, useSelectionState } from '../../entities/post/model/hooks';
 import { DialogContent, DialogHeader, DialogTitle } from '../../shared/ui';
+import { EditPostFormContent } from '../PostDialogs';
 
-export const Dialog = DialogPrimitive.Root;
+const Dialog = DialogPrimitive.Root;
 
 const PostEditDialog: React.FC = () => {
   const { showEditDialog, setShowEditDialog } = useDialogState();

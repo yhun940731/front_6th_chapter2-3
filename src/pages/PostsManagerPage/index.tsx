@@ -1,26 +1,24 @@
 import { useEffect } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
 
-// entities hooks
-import { usePostsState, usePostActions } from '../entities/post/model/hooks/index';
-import PaginationControls from '../features/PaginationControls';
-import PostsControls from '../features/PostsControls';
-import { Card, CardContent } from '../shared/ui';
-import CommentAddDialog from '../widgets/CommentAddDialog';
-import CommentEditDialog from '../widgets/CommentEditDialog';
-import PostAddDialog from '../widgets/PostAddDialog';
-import PostDetailDialog from '../widgets/PostDetailDialog';
-import PostEditDialog from '../widgets/PostEditDialog';
-import PostsHeader from '../widgets/PostsHeader';
-import PostsTable from '../widgets/PostsTable';
-import UserModal from '../widgets/UserModal';
-// FSD 분리된 컴포넌트
+import { usePostsManagerController } from './model/usePostsManagerController';
+import CommentAddDialog from '../../features/CommentAddDialog';
+import CommentEditDialog from '../../features/CommentEditDialog';
+import PaginationControls from '../../features/PaginationControls';
+import PostAddDialog from '../../features/PostAddDialog';
+import PostDetailDialog from '../../features/PostDetailDialog';
+import PostEditDialog from '../../features/PostEditDialog';
+import PostsControls from '../../features/PostsControls';
+import UserModal from '../../features/UserModal';
+import { Card, CardContent } from '../../shared/ui';
+import PostsHeader from '../../widgets/PostsHeader';
+import PostsTable from '../../widgets/PostsTable';
 
-const PostsManager = () => {
+const PostsManagerPage = () => {
   const navigate = useNavigate();
   const location = useLocation();
 
-  // 상태/액션 훅 (Jotai 래핑)
+  // 상태/액션 훅 (pages 전용 컨트롤러)
   const {
     skip,
     setSkip,
@@ -34,14 +32,7 @@ const PostsManager = () => {
     setSortOrder,
     selectedTag,
     setSelectedTag,
-    loading,
-  } = usePostsState();
-
-  const {
-    fetchTags: doFetchTags,
-    fetchPosts: doFetchPosts,
-    fetchPostsByTag: doFetchPostsByTag,
-  } = usePostActions();
+  } = usePostsManagerController();
 
   // URL 업데이트 함수
   const updateURL = () => {
@@ -55,29 +46,9 @@ const PostsManager = () => {
     navigate(`?${params.toString()}`);
   };
 
-  // 게시물 가져오기
-  const fetchPosts = () => doFetchPosts();
-
-  // 태그 가져오기
-  const fetchTags = () => doFetchTags();
-
-  // 태그별 게시물 가져오기
-  const fetchPostsByTag = (tag: string) => doFetchPostsByTag(tag);
-
-  // 댓글/상세/사용자 모달 등은 각 위젯 내부에서 처리
-
   useEffect(() => {
-    fetchTags();
-  }, []);
-
-  useEffect(() => {
-    if (selectedTag) {
-      fetchPostsByTag(selectedTag);
-    } else {
-      fetchPosts();
-    }
     updateURL();
-  }, [skip, limit, sortBy, sortOrder, selectedTag]);
+  }, [skip, limit, sortBy, sortOrder, selectedTag, searchQuery]);
 
   useEffect(() => {
     const params = new URLSearchParams(location.search);
@@ -88,9 +59,6 @@ const PostsManager = () => {
     setSortOrder((params.get('sortOrder') as 'asc' | 'desc') || 'asc');
     setSelectedTag(params.get('tag') || '');
   }, [location.search]);
-
-  // FSD 위젯/피처 콜백은 각 컴포넌트 내부에서 처리
-  // 댓글 렌더링은 PostDetailDialog 내부로 이전됨
 
   return (
     <main className='flex-grow container mx-auto px-4 py-8'>
@@ -103,7 +71,7 @@ const PostsManager = () => {
             <PostsControls />
 
             {/* 게시물 테이블 - Widget */}
-            {loading ? <div className='flex justify-center p-4'>로딩 중...</div> : <PostsTable />}
+            <PostsTable />
 
             {/* 페이지네이션 - Feature */}
             <PaginationControls />
@@ -132,4 +100,4 @@ const PostsManager = () => {
   );
 };
 
-export default PostsManager;
+export default PostsManagerPage;

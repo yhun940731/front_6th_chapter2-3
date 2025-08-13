@@ -1,4 +1,3 @@
-// Post API functions (dummyjson proxy via /api)
 export async function apiFetchPosts(limit: number, skip: number) {
   const res = await fetch(`/api/posts?limit=${limit}&skip=${skip}`);
   return res.json();
@@ -47,5 +46,3 @@ export async function apiUpdatePost(id: number, payload: Post) {
 export async function apiDeletePost(id: number) {
   await fetch(`/api/posts/${id}`, { method: 'DELETE' });
 }
-// Unused after FSD refactor cleanup. File intentionally left blank.
-export {};

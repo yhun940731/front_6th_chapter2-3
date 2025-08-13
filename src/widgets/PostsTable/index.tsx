@@ -6,8 +6,9 @@ import {
   usePostsState,
   usePostActions,
   useSelectionState,
-} from '../../entities/post/model/hooks/index';
+} from '../../entities/post/model/hooks';
 import type { Post, UserLite } from '../../entities/post/model/types';
+import { highlightText } from '../../shared/lib/highlightText';
 import {
   Button,
   Table,
@@ -26,20 +27,6 @@ const PostsTable: React.FC = () => {
   const { setShowEditDialog, setShowPostDetailDialog, setShowUserModal } = useDialogState();
 
   const { deletePost } = usePostActions();
-
-  const highlightText = (text: string | undefined, highlight: string) => {
-    if (!text) return null;
-    if (!highlight.trim()) return <span>{text}</span>;
-    const regex = new RegExp(`(${highlight})`, 'gi');
-    const parts = text.split(regex);
-    return (
-      <span>
-        {parts.map((part, i) =>
-          regex.test(part) ? <mark key={i}>{part}</mark> : <span key={i}>{part}</span>,
-        )}
-      </span>
-    );
-  };
 
   const onTagClick = (tag: string) => setSelectedTag(tag);
 

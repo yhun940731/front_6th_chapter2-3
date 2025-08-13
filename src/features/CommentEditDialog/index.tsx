@@ -5,11 +5,11 @@ import {
   useCommentActions,
   useDialogState,
   useSelectionState,
-} from '../../entities/post/model/hooks/index';
-import { EditCommentFormContent } from '../../features/PostDialogs';
+} from '../../entities/post/model/hooks';
 import { DialogContent, DialogHeader, DialogTitle } from '../../shared/ui';
+import { EditCommentFormContent } from '../PostDialogs';
 
-export const Dialog = DialogPrimitive.Root;
+const Dialog = DialogPrimitive.Root;
 
 const CommentEditDialog: React.FC = () => {
   const { showEditCommentDialog, setShowEditCommentDialog } = useDialogState();

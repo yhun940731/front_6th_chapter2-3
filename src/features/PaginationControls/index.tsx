@@ -1,7 +1,7 @@
 import * as SelectPrimitive from '@radix-ui/react-select';
 import React from 'react';
 
-import { usePostsState } from '../../entities/post/model/hooks/index';
+import { usePostsState } from '../../entities/post/model/hooks';
 import { Button, SelectContent, SelectItem, SelectTrigger } from '../../shared/ui';
 
 const Select = SelectPrimitive.Root;

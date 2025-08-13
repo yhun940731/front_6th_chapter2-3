@@ -2,7 +2,7 @@ import * as SelectPrimitive from '@radix-ui/react-select';
 import { Search } from 'lucide-react';
 import React from 'react';
 
-import { usePostActions, usePostsState } from '../../entities/post/model/hooks/index';
+import { usePostActions, usePostsState } from '../../entities/post/model/hooks';
 import { Input, SelectTrigger, SelectContent, SelectItem } from '../../shared/ui';
 
 const Select = SelectPrimitive.Root;

@@ -1,7 +1,7 @@
 import { Plus } from 'lucide-react';
 import React from 'react';
 
-import { useDialogState } from '../../entities/post/model/hooks/index';
+import { useDialogState } from '../../entities/post/model/hooks';
 import { Button, CardHeader, CardTitle } from '../../shared/ui';
 
 type Props = { title: string };

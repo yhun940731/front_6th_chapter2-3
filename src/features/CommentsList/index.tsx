@@ -1,29 +1,34 @@
 import { Plus, Edit2, Trash2, ThumbsUp } from 'lucide-react';
 import React from 'react';
 
+import {
+  useCommentActions,
+  useDialogState,
+  useSelectionState,
+} from '../../entities/post/model/hooks';
+import { highlightText } from '../../shared/lib/highlightText';
 import { Button } from '../../shared/ui';
 
 type Props = {
   postId: number;
-  comments: Record<number, any[]>;
   searchQuery: string;
-  onAddClick: (postId: number) => void;
-  onLike: (commentId: number, postId: number) => void;
-  onEdit: (comment: any) => void;
-  onDelete: (commentId: number, postId: number) => void;
-  highlightText: (text: string, highlight: string) => React.ReactNode;
 };
 
-const CommentsList: React.FC<Props> = ({
-  postId,
-  comments,
-  searchQuery,
-  onAddClick,
-  onLike,
-  onEdit,
-  onDelete,
-  highlightText,
-}) => {
+const CommentsList: React.FC<Props> = ({ postId, searchQuery }) => {
+  const { comments, setSelectedComment, setNewComment } = useSelectionState();
+  const { setShowAddCommentDialog, setShowEditCommentDialog } = useDialogState();
+  const { deleteComment, likeComment } = useCommentActions();
+
+  const onAddClick = (pid: number) => {
+    setNewComment({ body: '', postId: pid, userId: 1 });
+    setShowAddCommentDialog(true);
+  };
+  const onEdit = (comment: import('../../entities/post/model/types').Comment) => {
+    setSelectedComment(comment);
+    setShowEditCommentDialog(true);
+  };
+  const onDelete = (commentId: number, pid: number) => deleteComment(commentId, pid);
+  const onLike = (commentId: number, pid: number) => likeComment(commentId, pid);
   return (
     <div className='mt-2'>
       <div className='flex items-center justify-between mb-2'>
