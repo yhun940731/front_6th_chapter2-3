@@ -2,6 +2,13 @@ import { MessageSquare, Edit2, Trash2, ThumbsDown, ThumbsUp } from 'lucide-react
 import React from 'react';
 
 import {
+  useDialogState,
+  usePostsState,
+  usePostActions,
+  useSelectionState,
+} from '../../entities/post/model/hooks';
+import type { Post, UserLite } from '../../entities/post/model/types';
+import {
   Button,
   Table,
   TableHeader,
@@ -11,29 +18,41 @@ import {
   TableCell,
 } from '../../shared/ui';
 
-type Props = {
-  posts: any[];
-  searchQuery: string;
-  selectedTag: string;
-  onTagClick: (tag: string) => void;
-  onOpenPostDetail: (post: any) => void;
-  onEditPost: (post: any) => void;
-  onDeletePost: (id: number) => void;
-  highlightText: (text: string, highlight: string) => React.ReactNode;
-  onAuthorClick: (user: any) => void;
-};
+const PostsTable: React.FC = () => {
+  const { posts, searchQuery, selectedTag, setSelectedTag } = usePostsState();
+  const { setSelectedPost, setSelectedUser } = useSelectionState();
+  const { setShowEditDialog, setShowPostDetailDialog, setShowUserModal } = useDialogState();
+  const { deletePost } = usePostActions();
 
-const PostsTable: React.FC<Props> = ({
-  posts,
-  searchQuery,
-  selectedTag,
-  onTagClick,
-  onOpenPostDetail,
-  onEditPost,
-  onDeletePost,
-  highlightText,
-  onAuthorClick,
-}) => {
+  const highlightText = (text: string | undefined, highlight: string) => {
+    if (!text) return null;
+    if (!highlight.trim()) return <span>{text}</span>;
+    const regex = new RegExp(`(${highlight})`, 'gi');
+    const parts = text.split(regex);
+    return (
+      <span>
+        {parts.map((part, i) =>
+          regex.test(part) ? <mark key={i}>{part}</mark> : <span key={i}>{part}</span>,
+        )}
+      </span>
+    );
+  };
+
+  const onTagClick = (tag: string) => setSelectedTag(tag);
+  const onOpenPostDetail = (post: Post) => {
+    setSelectedPost(post);
+    setShowPostDetailDialog(true);
+  };
+  const onEditPost = (post: Post) => {
+    setSelectedPost(post);
+    setShowEditDialog(true);
+  };
+  const onDeletePost = (id: number) => deletePost(id);
+  const onAuthorClick = (user: UserLite) => {
+    setSelectedUser(user);
+    setShowUserModal(true);
+  };
+
   return (
     <Table>
       <TableHeader>
@@ -53,7 +72,7 @@ const PostsTable: React.FC<Props> = ({
               <div className='space-y-1'>
                 <div>{highlightText(post.title, searchQuery)}</div>
                 <div className='flex flex-wrap gap-1'>
-                  {post.tags?.map((tag: any) => (
+                  {post.tags?.map((tag: string) => (
                     <span
                       key={tag}
                       className={`px-1 text-[9px] font-semibold rounded-[4px] cursor-pointer ${

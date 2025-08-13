@@ -1,28 +1,26 @@
 import * as DialogPrimitive from '@radix-ui/react-dialog';
 import React from 'react';
 
+import { useDialogState, usePostActions, useSelectionState } from '../../entities/post/model/hooks';
 import { AddPostFormContent } from '../../features/PostDialogs';
 import { DialogContent, DialogHeader, DialogTitle } from '../../shared/ui';
 
 export const Dialog = DialogPrimitive.Root;
 
-type Props = {
-  open: boolean;
-  onOpenChange: (open: boolean) => void;
-  newPost: { title: string; body: string; userId: number };
-  setNewPost: (v: { title: string; body: string; userId: number }) => void;
-  onSubmit: () => void;
+const PostAddDialog: React.FC = () => {
+  const { showAddDialog, setShowAddDialog } = useDialogState();
+  const { newPost, setNewPost } = useSelectionState();
+  const { addPost } = usePostActions();
+  return (
+    <Dialog open={showAddDialog} onOpenChange={setShowAddDialog}>
+      <DialogContent>
+        <DialogHeader>
+          <DialogTitle>새 게시물 추가</DialogTitle>
+        </DialogHeader>
+        <AddPostFormContent newPost={newPost} setNewPost={setNewPost} onSubmit={addPost} />
+      </DialogContent>
+    </Dialog>
+  );
 };
-
-const PostAddDialog: React.FC<Props> = ({ open, onOpenChange, newPost, setNewPost, onSubmit }) => (
-  <Dialog open={open} onOpenChange={onOpenChange}>
-    <DialogContent>
-      <DialogHeader>
-        <DialogTitle>새 게시물 추가</DialogTitle>
-      </DialogHeader>
-      <AddPostFormContent newPost={newPost} setNewPost={setNewPost} onSubmit={onSubmit} />
-    </DialogContent>
-  </Dialog>
-);
 
 export default PostAddDialog;

@@ -1,37 +1,25 @@
 import * as SelectPrimitive from '@radix-ui/react-select';
 import { Search } from 'lucide-react';
-import React from 'react';
-
-import { Input, SelectTrigger, SelectContent, SelectItem } from '../../shared/ui';
-
 export const Select = SelectPrimitive.Root;
 export const SelectValue = SelectPrimitive.Value;
+import React from 'react';
 
-type Props = {
-  searchQuery: string;
-  onSearchChange: (v: string) => void;
-  onSearchEnter: () => void;
-  selectedTag: string;
-  tags: Array<{ slug: string; url: string }>;
-  onTagChange: (v: string) => void;
-  sortBy: string;
-  onSortByChange: (v: string) => void;
-  sortOrder: string;
-  onSortOrderChange: (v: string) => void;
-};
+import { usePostActions, usePostsState } from '../../entities/post/model/hooks';
+import { Input, SelectTrigger, SelectContent, SelectItem } from '../../shared/ui';
 
-const PostsControls: React.FC<Props> = ({
-  searchQuery,
-  onSearchChange,
-  onSearchEnter,
-  selectedTag,
-  tags,
-  onTagChange,
-  sortBy,
-  onSortByChange,
-  sortOrder,
-  onSortOrderChange,
-}) => {
+const PostsControls: React.FC = () => {
+  const {
+    searchQuery,
+    setSearchQuery,
+    selectedTag,
+    setSelectedTag,
+    tags,
+    sortBy,
+    setSortBy,
+    sortOrder,
+    setSortOrder,
+  } = usePostsState();
+  const { searchPosts } = usePostActions();
   return (
     <div className='flex gap-4'>
       <div className='flex-1'>
@@ -41,12 +29,12 @@ const PostsControls: React.FC<Props> = ({
             placeholder='게시물 검색...'
             className='pl-8'
             value={searchQuery}
-            onChange={(e) => onSearchChange(e.target.value)}
-            onKeyPress={(e) => e.key === 'Enter' && onSearchEnter()}
+            onChange={(e) => setSearchQuery(e.target.value)}
+            onKeyPress={(e) => e.key === 'Enter' && searchPosts()}
           />
         </div>
       </div>
-      <Select value={selectedTag} onValueChange={onTagChange}>
+      <Select value={selectedTag} onValueChange={(v) => setSelectedTag(v)}>
         <SelectTrigger className='w-[180px]'>
           <SelectValue placeholder='태그 선택' />
         </SelectTrigger>
@@ -59,7 +47,7 @@ const PostsControls: React.FC<Props> = ({
           ))}
         </SelectContent>
       </Select>
-      <Select value={sortBy} onValueChange={onSortByChange}>
+      <Select value={sortBy} onValueChange={(v) => setSortBy(v)}>
         <SelectTrigger className='w-[180px]'>
           <SelectValue placeholder='정렬 기준' />
         </SelectTrigger>
@@ -70,7 +58,7 @@ const PostsControls: React.FC<Props> = ({
           <SelectItem value='reactions'>반응</SelectItem>
         </SelectContent>
       </Select>
-      <Select value={sortOrder} onValueChange={onSortOrderChange}>
+      <Select value={sortOrder} onValueChange={(v) => setSortOrder(v as 'asc' | 'desc')}>
         <SelectTrigger className='w-[180px]'>
           <SelectValue placeholder='정렬 순서' />
         </SelectTrigger>
