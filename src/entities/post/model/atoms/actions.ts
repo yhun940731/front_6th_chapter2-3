@@ -29,6 +29,11 @@ import {
   showEditCommentDialogAtom,
   showEditDialogAtom,
 } from './ui';
+import { runWithLoading } from '../../../../shared/lib/loading';
+import { attachAuthor } from '../../../../shared/lib/posts';
+import { replaceById, removeById } from '../../../../shared/lib/array';
+import { apiJson } from '../../../../shared/lib/api';
+import { INITIAL_NEW_COMMENT, INITIAL_NEW_POST } from '../constants';
 
 export const fetchTagsAtom = atom(null, async (_get, set) => {
   const data = await apiFetchTags();
@@ -36,22 +41,16 @@ export const fetchTagsAtom = atom(null, async (_get, set) => {
 });
 
 export const fetchPostsAtom = atom(null, async (get, set) => {
-  set(loadingAtom, true);
-  try {
+  await runWithLoading(set, loadingAtom, async () => {
     const limit = get(limitAtom);
     const skip = get(skipAtom);
     const postsData = await apiFetchPosts(limit, skip);
     const usersData = await apiFetchUsersLite();
     const users = usersData.users as UserLite[];
-    const postsWithUsers = (postsData.posts as Post[]).map((post) => ({
-      ...post,
-      author: users.find((u) => u.id === post.userId),
-    }));
+    const postsWithUsers = attachAuthor(postsData.posts as Post[], users);
     set(postsAtom, postsWithUsers);
     set(totalAtom, postsData.total as number);
-  } finally {
-    set(loadingAtom, false);
-  }
+  });
 });
 
 export const fetchPostsByTagAtom = atom(null, async (_get, set, tag: string) => {
@@ -59,22 +58,16 @@ export const fetchPostsByTagAtom = atom(null, async (_get, set, tag: string) => 
     await set(fetchPostsAtom);
     return;
   }
-  set(loadingAtom, true);
-  try {
+  await runWithLoading(set, loadingAtom, async () => {
     const [postsData, usersData] = await Promise.all([
       apiFetchPostsByTag(tag),
       apiFetchUsersLite(),
     ]);
     const users = usersData.users as UserLite[];
-    const postsWithUsers = (postsData.posts as Post[]).map((post) => ({
-      ...post,
-      author: users.find((u) => u.id === post.userId),
-    }));
+    const postsWithUsers = attachAuthor(postsData.posts as Post[], users);
     set(postsAtom, postsWithUsers);
     set(totalAtom, postsData.total as number);
-  } finally {
-    set(loadingAtom, false);
-  }
+  });
 });
 
 export const searchPostsAtom = atom(null, async (get, set) => {
@@ -83,14 +76,11 @@ export const searchPostsAtom = atom(null, async (get, set) => {
     await set(fetchPostsAtom);
     return;
   }
-  set(loadingAtom, true);
-  try {
+  await runWithLoading(set, loadingAtom, async () => {
     const data = await apiSearchPosts(q);
     set(postsAtom, data.posts as Post[]);
     set(totalAtom, data.total as number);
-  } finally {
-    set(loadingAtom, false);
-  }
+  });
 });
 
 export const addPostAtom = atom(null, async (get, set) => {
@@ -99,88 +89,70 @@ export const addPostAtom = atom(null, async (get, set) => {
   const current = get(postsAtom) as Post[];
   set(postsAtom, [data as Post, ...current]);
   set(showAddDialogAtom, false);
-  set(newPostAtom, { title: '', body: '', userId: 1 });
+  set(newPostAtom, INITIAL_NEW_POST);
 });
 
 export const updatePostAtom = atom(null, async (get, set) => {
   const post = get(selectedPostAtom) as Post;
   const updated = await apiUpdatePost(post.id, post);
-  set(
-    postsAtom,
-    (get(postsAtom) as Post[]).map((p) => (p.id === updated.id ? (updated as Post) : p)),
-  );
+  set(postsAtom, replaceById(get(postsAtom) as Post[], updated as Post));
   set(showEditDialogAtom, false);
 });
 
 export const deletePostAtom = atom(null, async (get, set, id: number) => {
   await apiDeletePost(id);
-  set(
-    postsAtom,
-    (get(postsAtom) as Post[]).filter((p) => p.id !== id),
-  );
+  set(postsAtom, removeById(get(postsAtom) as Post[], id));
 });
 
 export const fetchCommentsAtom = atom(null, async (get, set, postId: number) => {
   const map = get(commentsAtom) as Record<number, Comment[]>;
   if (map[postId]) return;
-  const res = await fetch(`/api/comments/post/${postId}`);
-  const data = await res.json();
-  set(commentsAtom, { ...map, [postId]: data.comments as Comment[] });
+  const data = await apiJson<{ comments: Comment[] }>(`/api/comments/post/${postId}`);
+  set(commentsAtom, { ...map, [postId]: data.comments });
 });
 
 export const addCommentAtom = atom(null, async (get, set) => {
   const draft = get(newCommentAtom);
-  const res = await fetch('/api/comments/add', {
-    method: 'POST',
-    headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify(draft),
-  });
-  const data = await res.json();
+  const data = await apiJson<Comment>('/api/comments/add', { method: 'POST', body: draft });
   const map = get(commentsAtom) as Record<number, Comment[]>;
-  set(commentsAtom, { ...map, [data.postId]: [...(map[data.postId] || []), data as Comment] });
+  set(commentsAtom, { ...map, [data.postId]: [...(map[data.postId] || []), data] });
   set(showAddCommentDialogAtom, false);
-  set(newCommentAtom, { body: '', postId: null, userId: 1 });
+  set(newCommentAtom, INITIAL_NEW_COMMENT);
 });
 
 export const updateCommentAtom = atom(null, async (get, set) => {
   const selected = get(selectedCommentAtom)!;
-  const res = await fetch(`/api/comments/${selected.id}`, {
+  const data = await apiJson<Comment>(`/api/comments/${selected.id}`, {
     method: 'PUT',
-    headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({ body: selected.body }),
+    body: { body: selected.body },
   });
-  const data = await res.json();
   const postId = data.postId as number;
   const map = get(commentsAtom) as Record<number, Comment[]>;
   set(commentsAtom, {
     ...map,
-    [postId]: map[postId].map((c) => (c.id === data.id ? (data as Comment) : c)),
+    [postId]: replaceById(map[postId], data),
   });
   set(showEditCommentDialogAtom, false);
 });
 
 export const deleteCommentAtom = atom(null, async (get, set, id: number, postId: number) => {
-  await fetch(`/api/comments/${id}`, { method: 'DELETE' });
+  await apiJson(`/api/comments/${id}`, { method: 'DELETE' });
   const map = get(commentsAtom) as Record<number, Comment[]>;
   set(commentsAtom, {
     ...map,
-    [postId]: map[postId].filter((c) => c.id !== id),
+    [postId]: removeById(map[postId], id),
   });
 });
 
 export const likeCommentAtom = atom(null, async (get, set, id: number, postId: number) => {
   const map = get(commentsAtom) as Record<number, Comment[]>;
   const current = map[postId].find((c) => c.id === id)!;
-  const res = await fetch(`/api/comments/${id}`, {
+  const data = await apiJson<Comment>(`/api/comments/${id}`, {
     method: 'PATCH',
-    headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({ likes: current.likes + 1 }),
+    body: { likes: current.likes + 1 },
   });
-  const data = await res.json();
   set(commentsAtom, {
     ...map,
-    [postId]: map[postId].map((c) =>
-      c.id === data.id ? ({ ...data, likes: current.likes + 1 } as Comment) : c,
-    ),
+    [postId]: replaceById(map[postId], { ...data, likes: current.likes + 1 }),
   });
 });
